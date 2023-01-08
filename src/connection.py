@@ -20,8 +20,9 @@ SCREEN_DEVICE_PER_MODEL: dict[RemarkableModels, str] = {
 }
 
 
-def run_ssh_cmd(ssh_hostname, command, parameters=None):
+def run_ssh_cmd(ssh_hostname, command, parameters=None, raw=False):
     """Executes a command over shh and returns stdout result."""
+    
     try:
         pid = subprocess.run(
             [
@@ -35,7 +36,10 @@ def run_ssh_cmd(ssh_hostname, command, parameters=None):
             check=True,
             capture_output=True,
         )
-        return pid.stdout.decode("utf-8")
+        if (raw):
+            return pid.stdout
+        else:
+            return pid.stdout.decode("utf-8")
     except subprocess.CalledProcessError:
         raise ValueError(
             f"Can't connect to reMarkable tablet on hostname : {ssh_hostname}")
